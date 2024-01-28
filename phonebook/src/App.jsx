@@ -14,32 +14,45 @@ const App = () => {
     personService
       .getAll()
       .then(allPersons => {
-        setPersons(allPersons)
+          setPersons(allPersons)
+          setNewName('')
+          setNewPhone('')
       })
     }
     , []
-    )
+  )
 
   const addNew = (event) => {
     event.preventDefault()
 
-    if (persons.find((element) => element.name.toLowerCase() === newName.toLowerCase())){
-      alert(`${newName} is already added to the phonebook`);
+    const foundPerson = persons.find((element) => element.name.toLowerCase() === newName.toLowerCase())
+    if (foundPerson){
+      if (confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        const changedPerson = {...foundPerson, number: newPhone}
+        personService
+          .update(changedPerson)
+          .then(updatedPerson => {
+            setPersons(persons.map(person => person.id !== changedPerson.id ? person : updatedPerson))
+            setNewName('')
+            setNewPhone('')
+        })
+      }
       return;
     }
+    else {
+      const personObject = {
+        name: newName,
+        number: newPhone
+      }
 
-    const personObject = {
-      name: newName,
-      number: newPhone
-    }
-
-    personService
-      .create(personObject)
-      .then(createdPerson => {
-        setPersons(persons.concat(createdPerson))
-        setNewName('')
-        setNewPhone('')
+      personService
+        .create(personObject)
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson))
+          setNewName('')
+          setNewPhone('')
       })
+    }
   }
 
   const handleNewName = (event) => {
