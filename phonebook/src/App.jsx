@@ -13,8 +13,8 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then(persons => {
-        setPersons(persons)
+      .then(allPersons => {
+        setPersons(allPersons)
       })
     }
     , []
@@ -54,6 +54,17 @@ const App = () => {
     setFilter(event.target.value.toLowerCase())
   }
 
+  const handleDelete = (id) => {
+    const person = persons.find((element) => element.id === id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
+
   const filteredPersons = persons.filter((value) => value.name.toLowerCase().includes(filter))
 
   return (
@@ -63,7 +74,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm handleSubmit={addNew} nameValue={newName} phoneValue={newPhone} handleNewName={handleNewName} handleNewPhone={handleNewPhone} />
       <h2>Numbers</h2>
-      <PersonList persons={filteredPersons} />
+      <PersonList persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
