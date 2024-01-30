@@ -1,22 +1,25 @@
 import Country from './Country'
 
-const CountryList = ({ countries }) => {
+const CountryList = ({ countries, handleShow }) => {
     if (countries && countries.length > 0) {
         if (countries.length > 10) {
             return (<div>Too many matches, specify another filter</div>)
         }
         else if (countries.length > 1) {
             return (
-                <>
-                {countries.map((country) => <div key={country.cioc}>{country.name.common}</div>)}
-                </>
+                countries.map((country) => {
+                    return (
+                        <div key={country.cioc}>
+                            {country.name.common}
+                            <button onClick={() => handleShow(country)}>show</button>
+                        </div>
+                        )
+                })
             )
         }
         else {
             return (
-                <>
-                    <Country country={countries[0]} />
-                </>
+                <Country country={countries[0]} />
             )
         }
     }
