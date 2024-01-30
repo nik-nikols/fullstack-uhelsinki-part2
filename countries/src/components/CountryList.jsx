@@ -7,9 +7,9 @@ const CountryList = ({ countries }) => {
         }
         else if (countries.length > 1) {
             return (
-                <ul>
-                {countries.map((country) => <li key={country.cioc}>{country.name.common}</li>)}
-                </ul>
+                <>
+                {countries.map((country) => <div key={country.cioc}>{country.name.common}</div>)}
+                </>
             )
         }
         else {
