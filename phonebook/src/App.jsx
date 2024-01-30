@@ -11,6 +11,7 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [filter, setFilter] = useState('')
   const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('success')
 
   useEffect(() => {
     personService
@@ -23,6 +24,14 @@ const App = () => {
     }
     , []
   )
+
+  const showMessage = (newMessage, newMessageType = 'success') => {
+    setMessageType(newMessageType)
+    setMessage(newMessage)
+    setTimeout(() => {
+      setMessage(null)
+    }, 3000)
+  }
 
   const addNew = (event) => {
     event.preventDefault()
@@ -37,11 +46,14 @@ const App = () => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : updatedPerson))
             setNewName('')
             setNewPhone('')
-            setMessage(`Updated phone number for ${updatedPerson.name}`)
-            setTimeout(() => {
-              setMessage(null)
-            }, 3000)
-        })
+            showMessage(`Updated phone number for ${updatedPerson.name}`)
+          })
+          .catch(error => {
+            setPersons(persons.filter(person => person.id !== changedPerson.id))
+            setNewName('')
+            setNewPhone('')
+            showMessage(`Information of ${changedPerson.name} has already been removed from the server`, 'error')
+          })
       }
       return;
     }
@@ -57,10 +69,7 @@ const App = () => {
           setPersons(persons.concat(createdPerson))
           setNewName('')
           setNewPhone('')
-          setMessage(`Added ${createdPerson.name}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 3000)
+          showMessage(`Added ${createdPerson.name}`)
     })
     }
   }
@@ -84,6 +93,7 @@ const App = () => {
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+          showMessage(`Deleted information for ${person.name}`)
         })
     }
   }
@@ -93,7 +103,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} messageType={messageType} />
       <Filter value={filter} handleFilter={handleFilter} />
       <h2>add a new</h2>
       <PersonForm handleSubmit={addNew} nameValue={newName} phoneValue={newPhone} handleNewName={handleNewName} handleNewPhone={handleNewPhone} />
