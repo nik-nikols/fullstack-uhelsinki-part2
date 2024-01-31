@@ -9,8 +9,8 @@ const CountryList = ({ countries, handleShow }) => {
             return (
                 countries.map((country) => {
                     return (
-                        <div key={country.cioc}>
-                            {country.name.common}
+                        <div key={country.ccn3}>
+                            <span>{country.name.common}</span>
                             <button onClick={() => handleShow(country)}>show</button>
                         </div>
                         )
